@@ -1,6 +1,23 @@
 const express = require("express");
 const app = express();
 const PORT = 3000;
+const mysql = require('mysql2');
+
+// Create a connection
+const connection = mysql.createConnection({
+  host: '127.0.0.1',        // your MySQL server host
+  user: 'root',      // your MySQL username
+  password: '0398445870',  // your MySQL password
+  database: 'ctuintern' // your database name
+});
+
+// Connect to the database
+connection.connect((err) => {
+  if (err) {
+    return console.error('Error connecting: ' + err.message);
+  }
+  console.log('Connected to the MySQL server.');
+});
 
 const news = require("./data/news");
 const favorite = require("./data/favorite");
@@ -11,6 +28,17 @@ const task = require("./data/task");
 const myClass = require("./data/class");
 var studentInternList = require("./data/studentInternList")
 
+app.get('/test', (req, res) => {
+    const query = 'SELECT * FROM Employer, User where User.userName = "TMA Solution" AND Employer.userID = User.userID';
+  
+    connection.query(query, (err, results) => {
+      if (err) {
+        console.error('Error fetching data: ' + err.message);
+        return res.status(500).json({ error: 'Database query error' });
+      }
+      res.json(results);
+    });
+  });
 // NEWS SESSION
 // Get all news
 app.get("/news", (req, res) => {
